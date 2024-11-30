@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>noah r. | developer</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/0.160.0/three.min.js"></script>
+    <style>
+        :root {
+            --bg-color: #13151a;
+            --text-color: #e6e6e6;
+            /* Gradient flow from top to bottom */
+            --gradient-start: #00E5FF;     /* Cyan - Start */
+            --gradient-2: #33EADB;         /* Cyan -> Mint */
+            --gradient-3: #66F0B8;         /* Mint -> Green */
+            --gradient-ui: #98F595;        /* Middle point - Used for UI */
+            --gradient-5: #CCFA72;         /* Green -> Yellow */
+            --gradient-6: #FFE573;         /* Yellow -> Gold */
+            --gradient-end: #FFCC50;       /* Gold - End */
+            --glass-bg: rgba(19, 21, 26, 0.7);
+            --code-font: 'JetBrains Mono', monospace;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: var(--bg-color);
+            color: var(--text-color);
+            font-family: var(--code-font);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        #background-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 4rem 2rem;
+        }
+
+        .glass-container {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        /* Gradient flow colors */
+        .color-1 { color: var(--gradient-start); }  /* First item */
+        .color-2 { color: var(--gradient-2); }      /* Second item */
+        .color-3 { color: var(--gradient-3); }      /* Third item */
+        .color-4 { color: var(--gradient-5); }      /* Fifth item */
+        .color-5 { color: var(--gradient-6); }      /* Sixth item */
+        .color-6 { color: var(--gradient-end); }    /* Last item */
+
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .typewriter {
+            display: inline-block;
+            border-right: 2px solid var(--gradient-ui);
+            width: fit-content;
+            white-space: nowrap;
+            overflow: hidden;
+            animation: typing 2s steps(30, end), blink-caret 0.75s step-end infinite;
+            animation-fill-mode: forwards;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        /* Updated tab and filter styles */
+        .tab {
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            border-radius: 4px;
+            background: rgba(255, 255, 255, 0.03);
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tab:hover {
+            background: rgba(152, 245, 149, 0.05);
+            border-color: rgba(152, 245, 149, 0.2);
+        }
+
+        .tab.active {
+            background: linear-gradient(
+                    125deg,
+                    rgba(152, 245, 149, 0.05) 0%,
+                    rgba(152, 245, 149, 0.2) 40%,
+                    rgba(152, 245, 149, 0.15) 100%
+            );
+            color: var(--gradient-ui);
+            border: 1px solid rgba(152, 245, 149, 0.3);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+        }
+
+        .tab.active::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(
+                    circle at var(--x, center) var(--y, center),
+                    rgba(152, 245, 149, 0.2) 0%,
+                    transparent 60%
+            );
+            opacity: 0.8;
+            transition: opacity 0.3s;
+            pointer-events: none;
+        }
+
+        .language-filters {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+            align-items: center;
+        }
+
+        .language-filter {
+            padding: 0.4rem 0.8rem;
+            cursor: pointer;
+            border-radius: 4px;
+            background: rgba(255, 255, 255, 0.03);
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            position: relative;
+            overflow: hidden;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .language-filter:hover {
+            background: rgba(152, 245, 149, 0.05);
+            border-color: rgba(152, 245, 149, 0.2);
+        }
+
+        .language-filter.active {
+            background: linear-gradient(
+                    125deg,
+                    rgba(152, 245, 149, 0.05) 0%,
+                    rgba(152, 245, 149, 0.2) 40%,
+                    rgba(152, 245, 149, 0.15) 100%
+            );
+            color: var(--gradient-ui) !important;
+            border: 1px solid rgba(152, 245, 149, 0.3);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+        }
+
+        .language-filter.active::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(
+                    circle at var(--x, center) var(--y, center),
+                    rgba(152, 245, 149, 0.2) 0%,
+                    transparent 60%
+            );
+            opacity: 0.8;
+            transition: opacity 0.3s;
+            pointer-events: none;
+        }
+
+        .projects {
+            display: grid;
+            gap: 2.5rem;  /* Bigger gap between projects */
+            margin: 1rem 0;  /* Add margin to top and bottom of projects section */
+        }
+
+        .project-card {
+            margin: 0.5rem 0;  /* Small margin around each card */
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 1.75rem;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .project-card:hover {
+            transform: translateY(-2px);
+            border-color: var(--gradient-ui);
+        }
+
+        .language-tag {
+            display: inline-block;
+            padding: 0.2rem 0.5rem;
+            border-radius: 3px;
+            font-size: 0.8rem;
+            background: rgba(255, 255, 255, 0.1);
+            margin-left: 0.5rem;
+        }
+
+        /* Project language tags following the gradient */
+        .python-tag { color: var(--gradient-2); }
+        .cpp-tag { color: var(--gradient-3); }
+        .html-tag { color: var(--gradient-ui); }
+        .php-tag { color: var(--gradient-5); }
+        .react-tag { color: var(--gradient-6); }
+
+        @keyframes typing {
+            from { width: 0 }
+            to { width: 16ch }
+        }
+
+        @keyframes blink-caret {
+            from, to { border-color: transparent }
+            50% { border-color: var(--gradient-ui) }
+        }
+
+        @media (max-width: 480px) {
+            .tab {
+                font-size: 0.7rem;  /* Slightly smaller font */
+                text-align: center;  /* Center the text */
+                min-width: initial;  /* Remove any min-width */
+                flex: 1;  /* Let tabs grow equally */
+                white-space: nowrap;  /* Prevent text wrapping */
+            }
+        }
+
+        .typewriter.finished {
+            border-right-color: transparent;
+            animation: none;
+        }
+
+        .mb-6 {
+            margin-bottom: 2rem;
+        }
+
+        .mb-4 {
+            margin-bottom: 1rem;
+        }
+
+        .mb-2 {
+            margin-bottom: 0.5rem;
+        }
+
+        .text-lg {
+            font-size: 1.125rem;
+        }
+
+        .font-bold {
+            font-weight: 700;
+        }
+
+        .font-medium {
+            font-weight: 500;
+        }
+
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+            margin-top: 1rem;
+        }
+
+        .skills-grid ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .skills-grid li {
+            margin-bottom: 0.5rem;
+        }
+
+        #about p {
+            margin-bottom: 0.75rem;
+        }
+
+        .contact-grid {
+            display: grid;
+            gap: 1rem;
+            padding: 0.5rem 0;
+        }
+
+        .contact-link {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            text-decoration: none;
+            padding: 1rem;
+            border-radius: 4px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .contact-link:hover {
+            transform: translateX(4px);
+            border-color: var(--gradient-ui);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .contact-link span:first-child {
+            font-size: 1.1rem;
+            font-weight: 500;
+            min-width: 80px;
+        }
+
+        .link-description {
+            font-size: 1rem;
+            color: var(--text-color);
+        }
+
+        @media (min-width: 640px) {
+            .contact-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+<canvas id="background-canvas"></canvas>
+<div class="container">
+    <div class="section intro glass-container">
+        <h1 id="hi-im-noah-r" class="typewriter">hi, i'm noah r.</h1>
+        <p>i like <span class="color-1">game security</span> and <span class="color-2">machine learning</span>.</p>
+        <p>working with <span class="color-3">python</span>, <span class="color-4">c++</span>, and learning <span class="color-5">haskell</span> alongside <span class="color-6">rust</span>,</p>
+        <p>studying <span class="color-6">cybersecurity</span> at the university of gloucestershire.</p>
+    </div>
+
+    <div class="section glass-container">
+        <div class="tabs">
+            <div class="tab active" data-tab="projects">projects</div>
+            <div class="tab" data-tab="about">about</div>
+            <div class="tab" data-tab="contact">contact</div>
+        </div>
+
+        <div class="language-filters">
+            <div class="language-filter active" data-language="all">all</div>
+            <div class="language-filter" data-language="python">python</div>
+            <div class="language-filter" data-language="cpp">c++</div>
+            <div class="language-filter" data-language="html">html</div>
+            <div class="language-filter" data-language="php">php</div>
+            <div class="language-filter" data-language="react">react</div>
+        </div>
+
+        <div id="projects" class="projects">
+            <div class="project-card" data-languages="react" onclick="window.open('https://github.com/50sacinmysocidgaf/XboxUI', '_blank')">
+                <h3 id="xbox-ui-react" class="project-title">Xbox UI <span class="language-tag react-tag">React</span></h3>
+                <p>A redesigned Xbox UI concept built with React and modern web technologies.</p>
+            </div>
+
+            <div class="project-card" data-languages="html,php" onclick="window.open('https://github.com/50sacinmysocidgaf/TTSNotes', '_blank')">
+                <h3 id="ttsnotes-htmlphp" class="project-title">TTSNotes <span class="language-tag html-tag">HTML</span><span class="language-tag php-tag">PHP</span></h3>
+                <p>A web-based tool that automatically transcribes, summarizes, and generates study materials from lecture recordings.</p>
+            </div>
+
+            <div class="project-card" data-languages="python" onclick="window.open('https://github.com/50sacinmysocidgaf/PersonalAssistant', '_blank')">
+                <h3 id="personalassistant-python" class="project-title">PersonalAssistant <span class="language-tag python-tag">Python</span></h3>
+                <p>A memory-augmented LLM using numpy for vectorstore and surrounding modules for content association.</p>
+            </div>
+
+            <div class="project-card" data-languages="python" onclick="window.open('https://github.com/50sacinmysocidgaf/drivesharerevoker', '_blank')">
+                <h3 id="drive-share-revoke-python" class="project-title">Drive Share Revoker <span class="language-tag python-tag">Python</span></h3>
+                <p>A Python script designed to revoke access to files shared outside your organization.</p>
+            </div>
+
+            <div class="project-card" data-languages="cpp" onclick="window.open('https://github.com/50sacinmysocidgaf/TimeSeriesAnalysis', '_blank')">
+                <h3 id="timeseries-analysis-c" class="project-title">TimeSeries Analysis <span class="language-tag cpp-tag">C++</span></h3>
+                <p>Tool to calculate moving averages, volatility and movement trend for any stock using the Alpha Vantage API.</p>
+            </div>
+
+            <div class="project-card" data-languages="cpp" onclick="window.open('https://github.com/50sacinmysocidgaf/IDS', '_blank')">
+                <h3 id="ids-c" class="project-title">IDS <span class="language-tag cpp-tag">C++</span></h3>
+                <p>An intrusion detection tool created to develop my skills working with C++ in security.</p>
+            </div>
+
+            <div class="project-card" data-languages="python" onclick="window.open('https://github.com/50sacinmysocidgaf/Steganography', '_blank')">
+                <h3 id="steganography-python" class="project-title">Steganography <span class="language-tag python-tag">Python</span></h3>
+                <p>A tool used to embed/decode secret messages within images.</p>
+            </div>
+        </div>
+        <div id="about" class="about">
+            <div class="mb-6">
+                <h3 class="text-lg font-bold mb-4">Current</h3>
+                <p><span class="color-1">Quantitative Developer</span> for my personal investments</p>
+                <p><span class="color-2">Founder & Developer</span> at xppearance - social media customization platform</p>
+            </div>
+
+            <div class="mb-6">
+                <h3 class="text-lg font-bold mb-4">Experience</h3>
+                <p>Previously at <span class="color-3">Allbirds</span> as a Cyber Security Development Intern, building internal security tools and conducting cloud security assessments</p>
+                <p>Founded <span class="color-4">academiq</span>, an AI-powered educational platform with 500+ active users</p>
+            </div>
+
+            <div class="mb-6">
+                <h3 class="text-lg font-bold mb-4">Technical Skills</h3>
+                <div class="skills-grid">
+                    <div>
+                        <h4 class="font-medium mb-2 color-5">Languages</h4>
+                        <ul>
+                            <li>Python</li>
+                            <li>C++</li>
+                            <li>JavaScript/TypeScript</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 class="font-medium mb-2 color-5">Frameworks & Tools</h4>
+                        <ul>
+                            <li>React & Express.js</li>
+                            <li>MongoDB</li>
+                            <li>Google Cloud Platform</li>
+                            <li>Splunk</li>
+                            <li>PyTorch</li>
+                            <li>TensorFlow</li>
+                            <li>JAX</li>
+                            <li>CUDA</li>
+                            <li>IDA Pro</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-6">
+                <h3 class="text-lg font-bold mb-4">Focus Areas</h3>
+                <p>Specializing in <span class="color-6">game security</span> and machine learning</p>
+                <p>Strong foundation in cybersecurity and full-stack development</p>
+                <p>Particular interest in threat hunting and security analytics</p>
+            </div>
+        </div>
+        <div id="contact" class="about">
+            <div class="contact-grid">
+                <a href="https://github.com/50SACINMYSOCIDGAF" target="_blank" class="contact-link">
+                    <span class="color-1">github</span>
+                    <span class="link-description">check out my open source repos</span>
+                </a>
+
+                <a href="mailto:contact@noah.jp.net" class="contact-link">
+                    <span class="color-2">email</span>
+                    <span class="link-description">any enquiries?</span>
+                </a>
+
+                <a href="https://discordlookup.com/user/1106369952501481534" target="_blank" class="contact-link">
+                    <span class="color-3">discord</span>
+                    <span class="link-description">reach out on discord</span>
+                </a>
+
+                <a href="https://x.com/intent/follow?screen_name=immunity" target="_blank" class="contact-link">
+                    <span class="color-4">twitter</span>
+                    <span class="link-description">@immunity</span>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    // When the DOM loads, show only the projects tab content and hide others
+    document.addEventListener('DOMContentLoaded', () => {
+        // Hide all sections first
+        document.querySelectorAll('#about, #contact').forEach(section => {
+            section.style.display = 'none';
+        });
+
+        // Show projects section and language filters by default
+        document.getElementById('projects').style.display = 'block';
+        document.querySelector('.language-filters').style.display = 'flex';
+
+        // Make sure the projects tab is marked as active
+        document.querySelectorAll('.tab').forEach(tab => {
+            if(tab.getAttribute('data-tab') === 'projects') {
+                tab.classList.add('active');
+            } else {
+                tab.classList.remove('active');
+            }
+        });
+    });
+
+    // Rest of the tab switching code remains the same
+    document.querySelectorAll('.tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+            // Remove active class from all tabs
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            // Add active class to clicked tab
+            tab.classList.add('active');
+
+            // Hide all content sections
+            document.querySelectorAll('#projects, #about, #contact').forEach(section => {
+                section.style.display = 'none';
+            });
+
+            // Show/hide language filters based on selected tab
+            const languageFilters = document.querySelector('.language-filters');
+            if (tab.getAttribute('data-tab') === 'projects') {
+                languageFilters.style.display = 'flex';
+            } else {
+                languageFilters.style.display = 'none';
+            }
+
+            // Show selected section
+            const selectedTab = tab.getAttribute('data-tab');
+            document.getElementById(selectedTab).style.display = 'block';
+        });
+    });
+
+    document.querySelectorAll('.tab, .language-filter').forEach(button => {
+        button.addEventListener('mousemove', e => {
+            const rect = button.getBoundingClientRect();
+            const x = ((e.clientX - rect.left) / button.clientWidth) * 100;
+            const y = ((e.clientY - rect.top) / button.clientHeight) * 100;
+            button.style.setProperty('--x', `${x}%`);
+            button.style.setProperty('--y', `${y}%`);
+        });
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const title = document.getElementById('hi-im-noah-r');
+        title.addEventListener('animationend', (e) => {
+            if (e.animationName === 'typing') {
+                title.classList.add('finished');
+            }
+        });
+    });
+
+    // Three.js background
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer({
+        canvas: document.getElementById('background-canvas'),
+        alpha: true
+    });
+
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(window.devicePixelRatio);
+
+    const geometry = new THREE.BufferGeometry();
+    const particles = 2000;
+    const positions = new Float32Array(particles * 3);
+
+    for(let i = 0; i < particles * 3; i += 3) {
+        positions[i] = (Math.random() - 0.5) * 10;
+        positions[i + 1] = (Math.random() - 0.5) * 10;
+        positions[i + 2] = (Math.random() - 0.5) * 10;
+    }
+
+    geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+    const material = new THREE.PointsMaterial({
+        color: 0x98F595, // Default UI green
+        size: 0.02
+    });
+
+    const points = new THREE.Points(geometry, material);
+    scene.add(points);
+
+    camera.position.z = 5;
+
+    // Color transition functions
+    function getColoredElements() {
+        const coloredElements = document.querySelectorAll('[class^="color-"]');
+        return Array.from(coloredElements).map(el => ({
+            element: el,
+            rect: el.getBoundingClientRect(),
+            color: window.getComputedStyle(el).color
+        }));
+    }
+
+    function rgbToHex(rgb) {
+        const match = rgb.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
+        if (!match) return 0x98F595;
+
+        const r = parseInt(match[1]);
+        const g = parseInt(match[2]);
+        const b = parseInt(match[3]);
+
+        return (r << 16) | (g << 8) | b;
+    }
+
+    let targetColor = new THREE.Color(0x98F595);
+    let isTouch = false;
+
+    // Handle color updates
+    function updateParticleColor(event) {
+        if (isTouch) return;
+
+        const mouseX = event.clientX;
+        const mouseY = event.clientY + window.scrollY;
+        const elements = getColoredElements();
+
+        let closestDist = Infinity;
+        let closestColor = 0x98F595;
+
+        elements.forEach(({element, rect, color}) => {
+            const elementX = rect.left + rect.width/2;
+            const elementY = rect.top + rect.height/2;
+
+            const dist = Math.sqrt(
+                Math.pow(mouseX - elementX, 2) +
+                Math.pow(mouseY - elementY, 2)
+            );
+
+            if (dist < closestDist) {
+                closestDist = dist;
+                closestColor = rgbToHex(color);
+            }
+        });
+
+        targetColor = new THREE.Color(closestColor);
+    }
+
+    // Animation loop
+    function animate() {
+        requestAnimationFrame(animate);
+
+        // Smooth color transition
+        material.color.lerp(targetColor, 0.05);
+
+        points.rotation.x += 0.001;
+        points.rotation.y += 0.001;
+        renderer.render(scene, camera);
+    }
+
+    animate();
+
+    // Event listeners
+    window.addEventListener('touchstart', () => {
+        isTouch = true;
+        targetColor = new THREE.Color(0x98F595);
+    }, { once: true });
+
+    let lastMouseX = 0, lastMouseY = 0;
+
+    if (!isTouch) {
+        window.addEventListener('mousemove', (e) => {
+            lastMouseX = e.clientX;
+            lastMouseY = e.clientY;
+            updateParticleColor(e);
+        });
+
+        window.addEventListener('scroll', () => {
+            updateParticleColor({
+                clientX: lastMouseX,
+                clientY: lastMouseY
+            });
+        });
+    }
+
+    window.addEventListener('resize', () => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+
+    // Language filter functionality
+    document.addEventListener('DOMContentLoaded', () => {
+        const languageFilters = document.querySelectorAll('.language-filter');
+        const projectCards = document.querySelectorAll('.project-card');
+
+        languageFilters.forEach(filter => {
+            filter.addEventListener('click', () => {
+                // Update active filter
+                languageFilters.forEach(f => f.classList.remove('active'));
+                filter.classList.add('active');
+
+                const selectedLanguage = filter.getAttribute('data-language');
+
+                // Filter projects
+                projectCards.forEach(card => {
+                    const projectLanguages = card.getAttribute('data-languages')?.split(',') || [];
+
+                    if (selectedLanguage === 'all' || projectLanguages.includes(selectedLanguage)) {
+                        card.style.display = 'block';
+                        card.style.opacity = '0';
+                        setTimeout(() => {
+                            card.style.opacity = '1';
+                        }, 50);
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            });
+        });
+    });
+</script>
+</body>
+</html>
