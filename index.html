@@ -230,6 +230,7 @@
         .html-tag { color: var(--gradient-ui); }
         .php-tag { color: var(--gradient-5); }
         .react-tag { color: var(--gradient-6); }
+        .rust-tag { color: var(--gradient-end); }
 
         @keyframes typing {
             from { width: 0 }
@@ -377,9 +378,14 @@
             <div class="language-filter" data-language="html">html</div>
             <div class="language-filter" data-language="php">php</div>
             <div class="language-filter" data-language="react">react</div>
+            <div class="language-filter" data-language="rust">rust</div>
         </div>
 
         <div id="projects" class="projects">
+            <div class="project-card" data-languages="rust" onclick="window.open('https://github.com/50SACINMYSOCIDGAF/AdventOfCode2024', '_blank')">
+                <h3 id="AdventOfCode" class="project-title">Advent of Code 2024 <span class="language-tag rust-tag">Rust</span></h3>
+                <p>Repo containing all of my solutions to Advent of Code 2024</p>
+            </div>
             <div class="project-card" data-languages="html" onclick="window.open('https://github.com/50SACINMYSOCIDGAF/ThreeJSExperiment', '_blank')">
                 <h3 id="threejs-experiment-html" class="project-title">ThreeJS Experiment <span class="language-tag html-tag">HTML</span></h3>
                 <p>The source of for this webpage! an experiment using ThreeJS for particle effects.</p>
@@ -479,13 +485,17 @@
                     <span class="link-description">any enquiries?</span>
                 </a>
 
+                <a href="https://leetcode.com/u/knower/" target="_blank" class="contact-link">
+                    <span class="color-3">leetcode</span>
+                    <span class="link-description">my leetcode profile</span>
+
                 <a href="https://discordlookup.com/user/1106369952501481534" target="_blank" class="contact-link">
-                    <span class="color-3">discord</span>
+                    <span class="color-4">discord</span>
                     <span class="link-description">reach out on discord</span>
                 </a>
 
                 <a href="https://x.com/intent/follow?screen_name=immunity" target="_blank" class="contact-link">
-                    <span class="color-4">twitter</span>
+                    <span class="color-5">twitter</span>
                     <span class="link-description">@immunity</span>
                 </a>
             </div>
