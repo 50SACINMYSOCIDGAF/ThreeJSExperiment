@@ -32,43 +32,65 @@ class ThemeManager {
     }
 }
 
-// Settings Panel Manager
 class SettingsManager {
     constructor() {
         this.overlay = document.getElementById('settings-overlay');
+        this.holdTimer = null;
+        this.holdDuration = 2000;
+        this.wasLongPress = false;
+        this.hackingGame = null;  // Initialize as null
         this.bindEvents();
+        this.initializeGame();
     }
 
-    toggleSettings() {
-        this.overlay.classList.toggle('active');
+    initializeGame() {
+        this.hackingGame = new HackingGame();  // Create instance
     }
 
     bindEvents() {
-        // Settings button
-        document.getElementById('settings-button')
-            .addEventListener('click', () => this.toggleSettings());
+        const settingsButton = document.getElementById('settings-button');
 
-        // Close button
+        // Use arrow functions to maintain 'this' context
+        settingsButton.addEventListener('click', (e) => {
+            if (!this.wasLongPress) {
+                this.toggleSettings();
+            }
+            this.wasLongPress = false;
+        });
+
+        settingsButton.addEventListener('mousedown', () => {
+            this.wasLongPress = false;
+            this.holdTimer = setTimeout(() => {
+                this.wasLongPress = true;
+                if (this.hackingGame) {  // Check if game exists
+                    this.toggleSettings(); // Close settings if open
+                    this.hackingGame.showGame();
+                }
+            }, this.holdDuration);
+        });
+
+        const clearTimer = () => {
+            if (this.holdTimer) {
+                clearTimeout(this.holdTimer);
+                this.holdTimer = null;
+            }
+        };
+
+        settingsButton.addEventListener('mouseup', clearTimer);
+        settingsButton.addEventListener('mouseleave', clearTimer);
+
         document.getElementById('close-settings')
             .addEventListener('click', () => this.toggleSettings());
 
-        // Click outside to close
         this.overlay.addEventListener('click', (e) => {
             if (e.target === this.overlay) {
                 this.toggleSettings();
             }
         });
+    }
 
-        // Hover effects for corner buttons
-        document.querySelectorAll('.corner-button').forEach(button => {
-            button.addEventListener('mousemove', e => {
-                const rect = button.getBoundingClientRect();
-                const x = ((e.clientX - rect.left) / button.clientWidth) * 100;
-                const y = ((e.clientY - rect.top) / button.clientHeight) * 100;
-                button.style.setProperty('--x', `${x}%`);
-                button.style.setProperty('--y', `${y}%`);
-            });
-        });
+    toggleSettings() {
+        this.overlay.classList.toggle('active');
     }
 }
 
