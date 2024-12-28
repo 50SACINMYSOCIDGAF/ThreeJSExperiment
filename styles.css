@@ -1,0 +1,549 @@
+/* Theme Variables */
+:root {
+    /* Base Colors */
+    --bg-color: #13151a;
+    --text-color: #e6e6e6;
+    --glass-bg: rgba(19, 21, 26, 0.7);
+    --code-font: 'JetBrains Mono', monospace;
+
+    /* Cyan to Gold Theme */
+    --theme-cyan-gold-start: #00E5FF;
+    --theme-cyan-gold-2: #33EADB;
+    --theme-cyan-gold-3: #66F0B8;
+    --theme-cyan-gold-ui: #98F595;
+    --theme-cyan-gold-5: #CCFA72;
+    --theme-cyan-gold-6: #FFE573;
+    --theme-cyan-gold-end: #FFCC50;
+
+    /* Purple to Pink Theme */
+    --theme-purple-pink-start: #BD00FF;
+    --theme-purple-pink-2: #CC33EA;
+    --theme-purple-pink-3: #DB66F0;
+    --theme-purple-pink-ui: #EA98F5;
+    --theme-purple-pink-5: #F5CCFA;
+    --theme-purple-pink-6: #FFE5FF;
+    --theme-purple-pink-end: #FFC8F0;
+
+    --theme-cyan-gold-ui-rgb: 152, 245, 149;
+    --theme-purple-pink-ui-rgb: 234, 152, 245;
+}
+
+
+/* Theme-specific color assignments */
+[data-theme="cyan-gold"] {
+    --gradient-start: var(--theme-cyan-gold-start);
+    --gradient-2: var(--theme-cyan-gold-2);
+    --gradient-3: var(--theme-cyan-gold-3);
+    --gradient-ui: var(--theme-cyan-gold-ui);
+    --gradient-5: var(--theme-cyan-gold-5);
+    --gradient-6: var(--theme-cyan-gold-6);
+    --gradient-end: var(--theme-cyan-gold-end);
+    --gradient-ui-rgb: var(--theme-cyan-gold-ui-rgb);
+}
+
+[data-theme="purple-pink"] {
+    --gradient-start: var(--theme-purple-pink-start);
+    --gradient-2: var(--theme-purple-pink-2);
+    --gradient-3: var(--theme-purple-pink-3);
+    --gradient-ui: var(--theme-purple-pink-ui);
+    --gradient-5: var(--theme-purple-pink-5);
+    --gradient-6: var(--theme-purple-pink-6);
+    --gradient-end: var(--theme-purple-pink-end);
+    --gradient-ui-rgb: var(--theme-purple-pink-ui-rgb);
+}
+
+/* Reset and Base Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background: var(--bg-color);
+    color: var(--text-color);
+    font-family: var(--code-font);
+    line-height: 1.6;
+    overflow-x: hidden;
+}
+
+/* Layout */
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 4rem 2rem;
+}
+
+/* Background Canvas */
+#background-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: -1;
+}
+
+/* Glass Container */
+.glass-container {
+    background: var(--glass-bg);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 2rem;
+    margin-bottom: 2rem;
+}
+
+/* Typography */
+h1 {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+}
+
+.text-lg { font-size: 1.125rem; }
+.font-bold { font-weight: 700; }
+.font-medium { font-weight: 500; }
+
+/* Margin Utilities */
+.mb-6 { margin-bottom: 2rem; }
+.mb-4 { margin-bottom: 1rem; }
+.mb-2 { margin-bottom: 0.5rem; }
+
+/* Gradient Color Classes */
+.color-1 { color: var(--gradient-start); }
+.color-2 { color: var(--gradient-2); }
+.color-3 { color: var(--gradient-3); }
+.color-4 { color: var(--gradient-5); }
+.color-5 { color: var(--gradient-6); }
+.color-6 { color: var(--gradient-end); }
+
+/* Typewriter Effect */
+.typewriter {
+    display: inline-block;
+    border-right: 2px solid var(--gradient-ui);
+    width: fit-content;
+    white-space: nowrap;
+    overflow: hidden;
+    animation: typing 2s steps(30, end), blink-caret 0.75s step-end infinite;
+    animation-fill-mode: forwards;
+}
+
+.typewriter.finished {
+    border-right-color: transparent;
+    animation: none;
+}
+
+/* Tabs */
+.tabs {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.tab {
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.03);
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    position: relative;
+    overflow: hidden;
+}
+
+.tab:hover {
+    background: rgba(var(--gradient-ui-rgb), 0.05);
+    border-color: rgba(var(--gradient-ui-rgb), 0.2);
+}
+
+.tab.active {
+    background: linear-gradient(
+            125deg,
+            rgba(var(--gradient-ui-rgb), 0.05) 0%,
+            rgba(var(--gradient-ui-rgb), 0.2) 40%,
+            rgba(var(--gradient-ui-rgb), 0.15) 100%
+    );
+    color: var(--gradient-ui);
+    border: 1px solid rgba(var(--gradient-ui-rgb), 0.3);
+}
+
+.tab.active::before {
+    background: radial-gradient(
+            circle at var(--x, center) var(--y, center),
+            rgba(var(--gradient-ui-rgb), 0.2) 0%,
+            transparent 60%
+    );
+}
+
+/* Language Filters */
+.language-filters {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 2rem;
+    align-items: center;
+}
+
+.language-filter {
+    padding: 0.4rem 0.8rem;
+    cursor: pointer;
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.03);
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    position: relative;
+    overflow: hidden;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.language-filter:hover {
+    background: rgba(var(--gradient-ui-rgb), 0.05);
+    border-color: rgba(var(--gradient-ui-rgb), 0.2);
+}
+
+.language-filter.active {
+    background: linear-gradient(
+            125deg,
+            rgba(var(--gradient-ui-rgb), 0.05) 0%,
+            rgba(var(--gradient-ui-rgb), 0.2) 40%,
+            rgba(var(--gradient-ui-rgb), 0.15) 100%
+    );
+    color: var(--gradient-ui) !important;
+    border: 1px solid rgba(var(--gradient-ui-rgb), 0.3);
+}
+
+.language-filter.active::before {
+    background: radial-gradient(
+            circle at var(--x, center) var(--y, center),
+            rgba(var(--gradient-ui-rgb), 0.2) 0%,
+            transparent 60%
+    );
+}
+
+/* Projects */
+.projects {
+    display: grid;
+    gap: 2.5rem;
+    margin: 1rem 0;
+}
+
+.project-card {
+    margin: 0.5rem 0;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 1.75rem;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.project-card:hover {
+    transform: translateY(-2px);
+    border-color: var(--gradient-ui);
+}
+
+/* Language Tags */
+.language-tag {
+    display: inline-block;
+    padding: 0.2rem 0.5rem;
+    border-radius: 3px;
+    font-size: 0.8rem;
+    background: rgba(255, 255, 255, 0.1);
+    margin-left: 0.5rem;
+}
+
+/* Match header colors */
+.python-tag { color: var(--gradient-3); }   /* Matches Python in header */
+.cpp-tag { color: var(--gradient-5); }      /* Matches C++ in header */
+.haskell-tag { color: var(--gradient-6); }  /* Matches Haskell in header */
+.rust-tag { color: var(--gradient-end); }   /* Matches Rust in header */
+
+/* Complementary colors from gradient */
+.html-tag { color: var(--gradient-start); } /* Using cyan */
+.php-tag { color: var(--gradient-2); }      /* Using cyan-mint */
+.react-tag { color: var(--gradient-ui); }   /* Using UI green */
+
+/* Skills Grid */
+.skills-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
+    margin-top: 1rem;
+}
+
+.skills-grid ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.skills-grid li {
+    margin-bottom: 0.5rem;
+}
+
+/* Contact Grid */
+.contact-grid {
+    display: grid;
+    gap: 1rem;
+    padding: 0.5rem 0;
+}
+
+.contact-link {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    text-decoration: none;
+    padding: 1rem;
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+}
+
+.contact-link:hover {
+    transform: translateX(4px);
+    border-color: var(--gradient-ui);
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.contact-link span:first-child {
+    font-size: 1.1rem;
+    font-weight: 500;
+    min-width: 80px;
+}
+
+.link-description {
+    font-size: 1rem;
+    color: var(--text-color);
+}
+
+/* Settings Panel */
+.settings-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(19, 21, 26, 0.8);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    z-index: 1000;
+    display: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.settings-overlay.active {
+    display: flex;
+    opacity: 1;
+}
+
+.settings-panel {
+    position: fixed;
+    bottom: 5rem;
+    left: 2rem;
+    width: 300px;
+    background: var(--glass-bg);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 1.5rem;
+    transform: translateY(20px);
+    opacity: 0;
+    transition: all 0.3s ease;
+}
+
+.settings-overlay.active .settings-panel {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+.settings-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.close-button {
+    cursor: pointer;
+    font-size: 1.5rem;
+    opacity: 0.7;
+    transition: opacity 0.2s ease;
+}
+
+.close-button:hover {
+    opacity: 1;
+}
+
+/* Corner Buttons */
+.corner-buttons {
+    position: fixed;
+    bottom: 2rem;
+    left: 2rem;
+    display: flex;
+    gap: 0.5rem;
+    z-index: 100;
+}
+
+.corner-button {
+    padding: 0.4rem 0.8rem;
+    cursor: pointer;
+    border-radius: 4px;
+    background: var(--glass-bg);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    position: relative;
+    overflow: hidden;
+    text-decoration: none;
+    color: var(--text-color);
+    font-family: var(--code-font);
+}
+
+.corner-button:hover {
+    background: rgba(var(--gradient-ui-rgb), 0.05);
+    border-color: rgba(var(--gradient-ui-rgb), 0.2);
+}
+
+.corner-button::before {
+    background: radial-gradient(
+            circle at var(--x, center) var(--y, center),
+            rgba(var(--gradient-ui-rgb), 0.2) 0%,
+            transparent 60%
+    );
+}
+
+.corner-button:hover::before {
+    opacity: 0.8;
+}
+
+.hover-effect {
+    position: relative;
+    overflow: hidden;
+}
+
+.hover-effect::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(
+            circle at var(--x, center) var(--y, center),
+            rgba(var(--gradient-ui-rgb), 0.2) 0%,
+            transparent 60%
+    );
+    opacity: 0;
+    transition: opacity 0.3s;
+    pointer-events: none;
+}
+
+.hover-effect:hover::before {
+    opacity: 0.8;
+}
+
+/* Theme Selector */
+.theme-selector {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+}
+
+.theme-option {
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 4px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.2s ease;
+    text-align: center;
+}
+.theme-option:hover {
+    border-color: var(--gradient-ui);
+}
+
+.theme-option.active {
+    background: rgba(152, 245, 149, 0.1);
+    border-color: var(--gradient-ui);
+}
+
+.theme-preview {
+    height: 20px;
+    border-radius: 4px;
+    margin-bottom: 0.5rem;
+}
+
+.theme-preview.cyan-gold-preview {
+    background: linear-gradient(to right,
+    var(--theme-cyan-gold-start),
+    var(--theme-cyan-gold-end)
+    );
+}
+
+.theme-preview.purple-pink-preview {
+    background: linear-gradient(to right,
+    var(--theme-purple-pink-start),
+    var(--theme-purple-pink-end)
+    );
+}
+
+/* Setting Items */
+.setting-item {
+    margin-bottom: 1.5rem;
+}
+
+.setting-label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: var(--gradient-ui);
+    font-size: 0.9rem;
+}
+
+/* Animations */
+@keyframes typing {
+    from { width: 0 }
+    to { width: 16ch }
+}
+
+@keyframes blink-caret {
+    from, to { border-color: transparent }
+    50% { border-color: var(--gradient-ui) }
+}
+
+/* Media Queries */
+@media (max-width: 480px) {
+    .tab {
+        font-size: 0.7rem;
+        text-align: center;
+        min-width: initial;
+        flex: 1;
+        white-space: nowrap;
+    }
+
+    .skills-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+
+    .skills-grid h4:last-of-type {
+        margin-top: 1rem;
+    }
+
+    .settings-panel {
+        width: calc(100vw - 4rem);
+        left: 2rem;
+        bottom: 4rem;
+    }
+}
+
+@media (min-width: 640px) {
+    .contact-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
